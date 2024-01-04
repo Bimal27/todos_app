@@ -12,6 +12,9 @@ function App() {
   const [todos, setTodos] = useState([])
   const [newtasks, setNewtasks] = useState([])
 
+  const [editingTaskId, setEditingTaskId] = useState(null)
+  const [updatedTaskText, setUpdatedTaskText] = useState('')
+
   useEffect(() => {
     const storedTask = JSON.parse(localStorage.getItem('todos')) || []
     setTodos(storedTask)
@@ -30,6 +33,18 @@ function App() {
     localStorage.setItem('todos', JSON.stringify(updatedTodos))
     alert(`"${newtasks}" has been added to the task list.`)
   }
+  const updateTodo = () => {
+    const updatedTodos = todos.map((todo) =>
+      todo.id === editingTaskId ? { ...todo, text: updatedTaskText } : todo,
+    )
+    setTodos(updatedTodos)
+    setEditingTaskId(null)
+    setUpdatedTaskText('')
+
+    localStorage.setItem('todos', JSON.stringify(updatedTodos))
+
+    alert('Task updated successfully.')
+  }
 
   const removeTodo = (id) => {
     const updatedTodos = todos.filter((todo) => todo.id !== id)
@@ -44,11 +59,11 @@ function App() {
       <MantineProvider>
         <Container size="xl">
           <Grid gutter="md">
-            <div style={{ display: 'flex', marginBottom: '16px' }}>
+            <div style={{ marginBottom: '16px' }}>
               <input
                 style={{ borderRadius: '4px', padding: '8px' }}
-                placeholder="Please add a new task"
                 value={newtasks}
+                placeholder="Add a new task"
                 onChange={(e) => setNewtasks(e.target.value)}
               />
               <button
@@ -62,27 +77,48 @@ function App() {
                 Add Task
               </button>
             </div>
-            <ul>
-              {todos.map((todo) => (
-                <Card
-                  key={todo.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: '10px',
-                  }}
-                >
-                  <li> {todo.text}</li>
-                  <button
-                    onClick={() => removeTodo(todo.id)}
-                    style={{ color: 'red' }}
-                  >
-                    Delete
-                  </button>
-                </Card>
-              ))}
-            </ul>
+
+            {todos.map((todo) => (
+              <Card
+                key={todo.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: '10px',
+                }}
+              >
+                {editingTaskId === todo.id ? (
+                  <>
+                    <input
+                      style={{ borderRadius: '3px', padding: '6px' }}
+                      value={updatedTaskText}
+                      onChange={(e) => setUpdatedTaskText(e.target.value)}
+                      placeholder="Update task text"
+                    />
+                    <button onClick={updateTodo} style={{ color: 'orange' }}>
+                      Update
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <li> {todo.text}</li>
+                    <button
+                      onClick={() => setEditingTaskId(todo.id)}
+                      style={{ color: 'orange' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => removeTodo(todo.id)}
+                      style={{ color: 'red' }}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </Card>
+            ))}
           </Grid>
         </Container>
       </MantineProvider>
