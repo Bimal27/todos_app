@@ -4,7 +4,6 @@ import {
   MantineProvider,
   Container,
   Grid,
-  Notification,
   Card,
 } from '@mantine/core'
 
@@ -21,11 +20,6 @@ function App() {
   }, [])
 
   const addTask = () => {
-    if (newtasks.trim() === '') {
-      Notification.error('Please enter a task')
-      return
-    }
-
     const updatedTodos = [...todos, { id: Date.now(), text: newtasks }]
     setTodos(updatedTodos)
     setNewtasks('')
