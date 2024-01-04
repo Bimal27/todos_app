@@ -28,6 +28,7 @@ function App() {
     setNewtasks('')
 
     localStorage.setItem('todos', JSON.stringify(updatedTodos))
+    alert(`"${newtasks}" has been added to the task list.`)
   }
 
   const removeTodo = (id) => {
